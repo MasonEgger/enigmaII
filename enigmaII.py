@@ -39,7 +39,29 @@ def encrypt(order, code, message):
 
 
 def decrypt(order, code, message):
-    print "NOT IMPLEMENTED YET"
+    enc1 = rotate(wheels[order[0]], wheels[order[0]].index(code[0]))
+    enc2 = rotate(wheels[order[1]], wheels[order[1]].index(code[1]))
+    key = rotate(wheels[order[2]], wheels[order[2]].index(code[2]))
+
+    dec_message = ""
+    gear = 0
+    num_letters = 1
+    for let in message:
+        if gear == 0:
+            index = enc1.index(let)
+            dec_message += key[index]
+            gear = 1
+        elif gear == 1:
+            index = enc2.index(let)
+            dec_message += key[-index]
+            gear = 0
+        if num_letters == 4:
+            dec_message += " "
+            num_letters = 1
+        else:
+            num_letters += 1
+
+    return dec_message.upper()
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Enigma II Encryption/Decryption device.')
