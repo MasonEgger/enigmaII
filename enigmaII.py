@@ -69,10 +69,6 @@ if __name__ == "__main__":
         # get and sanitate message to encrypt
         message = alpha_regex.sub('', args.message).lower()
 
-        if args.decrypt and args.encrypt:
-            print "Choose either encrypt or decrypt. Not both."
-            sys.exit(1)
-
         if args.encrypt:
             print encrypt(args.order.lower(), key, message)
             sys.exit(0)
