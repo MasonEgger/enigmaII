@@ -1,5 +1,7 @@
 import re
 import sys
+import argparse
+
 wheelV = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z']
 wheelVI = ['a', 'c', 'e', 'd', 'f', 'h', 'g', 'i', 'k', 'j', 'l', 'n', 'm', 'o', 'q', 'p', 'r', 't', 's', 'u', 'w', 'v', 'x', 'z', 'y', 'b']
 wheelVII = ['a', 'z', 'y', 'x', 'w', 'v', 'u', 't', 's', 'r', 'q', 'p', 'o', 'n', 'm', 'l', 'k', 'j', 'i', 'h', 'g', 'f', 'e', 'd', 'c', 'b']
@@ -36,24 +38,47 @@ def encrypt(order, code, message):
     return enc_message.upper()
 
 
+def decrypt(order, code, message):
+    print "NOT IMPLEMENTED YET"
+
 if __name__ == "__main__":
-    alpha_regex = re.compile('[^a-zA-Z]')
+    parser = argparse.ArgumentParser(description='Enigma II Encryption/Decryption device.')
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('-d', '--decrypt', action='store_true', help='Decrypt a message')
+    group.add_argument('-e', '--encrypt', action='store_true', help='Encrypt a message')
+    parser.add_argument('-k', '--key', help='3 letter key made of alpha characters')
+    parser.add_argument('-m', '--message', help='Message to encrypt or decrypt')
+    parser.add_argument('-o', '--order', help='Gear order. Can be a combination of the number 5, 6, and 7')
 
-    # get and validate order
-    order = raw_input("Enter order: ")
-    if len(order) != 3:
-        print "Invalid order"
+    args = parser.parse_args()
+
+    if args.order is not None or args.key is not None or args.message is not None:
+        alpha_regex = re.compile('[^a-zA-Z]')
+
+        # get and validate order
+        if len(args.order) != 3:
+            print "Invalid order"
+            sys.exit(1)
+
+        # get and validate code
+        key = alpha_regex.sub('', args.key).lower()
+        if len(key) != 3:
+            print "Invalid code"
+            sys.exit(1)
+
+        # get and sanitate message to encrypt
+        message = alpha_regex.sub('', args.message).lower()
+
+        if args.decrypt and args.encrypt:
+            print "Choose either encrypt or decrypt. Not both."
+            sys.exit(1)
+
+        if args.encrypt:
+            print encrypt(args.order.lower(), key, message)
+            sys.exit(0)
+
+        if args.decrypt:
+            print decrypt(args.order.lower(), key, message)
+    else:
+        parser.print_help()
         sys.exit(1)
-
-    # get and validate code
-    code = raw_input("Enter the code: ")
-    code = alpha_regex.sub('', code).lower()
-    if len(code) != 3:
-        print "Invalid code"
-        sys.exit(1)
-
-    # get and sanitate message to encrypt
-    message = raw_input("Enter the messae to encrypt: ")
-    message = alpha_regex.sub('', message).lower()
-
-    print encrypt(order.lower(), code.lower(), message)
