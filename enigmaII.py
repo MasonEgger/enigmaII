@@ -70,7 +70,7 @@ if __name__ == "__main__":
     group.add_argument('-e', '--encrypt', action='store_true', help='Encrypt a message')
     parser.add_argument('-k', '--key', help='3 letter key made of alpha characters')
     parser.add_argument('-m', '--message', help='Message to encrypt or decrypt')
-    parser.add_argument('-o', '--order', help='Gear order. Can be a combination of the number 5, 6, and 7')
+    parser.add_argument('-o', '--order', help='Gear order. Must be a permutation of the numbers 5, 6, and 7')
 
     args = parser.parse_args()
 
@@ -78,14 +78,14 @@ if __name__ == "__main__":
         alpha_regex = re.compile('[^a-zA-Z]')
 
         # get and validate order
-        if len(args.order) != 3:
-            print "Invalid order"
+        if len(args.order) != 3 or '5' not in args.order or '6' not in args.order or '7' not in args.order:
+            print "Invalid order. Must be a permutation of the numbers 5, 6, and 7"
             sys.exit(1)
 
         # get and validate code
         key = alpha_regex.sub('', args.key).lower()
         if len(key) != 3:
-            print "Invalid code"
+            print "Invalid key. Must be a 3 letter key made of alpha characters."
             sys.exit(1)
 
         # get and sanitate message to encrypt
